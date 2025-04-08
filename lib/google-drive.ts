@@ -1,8 +1,8 @@
 import { google } from "googleapis"
 import path from "path"
 import fs from "fs/promises"
+import { Course, Level, Module, SubModule, Lesson } from "../types/course"
 
-// Configuração da autenticação com o Google Drive
 const auth = new google.auth.GoogleAuth({
   credentials: {
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -13,303 +13,141 @@ const auth = new google.auth.GoogleAuth({
 
 const drive = google.drive({ version: "v3", auth })
 
-// Função para listar o conteúdo de uma pasta
-export async function listFolderContents(folderId: string) {
+async function getMetadata(folderId: string) {
+  try {
+    const files = await listFolderContents(folderId)
+    const metadataFile = files.find((f) => f.name === "metadata.md")
+
+    if (!metadataFile || !metadataFile.id) return null
+
+    const file = await drive.files.get({
+      fileId: metadataFile.id,
+      alt: "media",
+    })
+
+    const content = file.data as string
+
+    return {
+      description: content.match(/@descrição\s*([\s\S]*?)(?=@|$)/)?.[1]?.trim(),
+      challengeUrl: content.match(/@link desafio:\s*(.*?)(?=@|$)/)?.[1]?.trim(),
+    }
+  } catch (error) {
+    console.error("Error reading metadata:", error)
+    return null
+  }
+}
+
+async function listFolderContents(folderId: string) {
   try {
     const response = await drive.files.list({
       q: `'${folderId}' in parents and trashed = false`,
       fields: "files(id, name, mimeType)",
       orderBy: "name",
     })
-
     return response.data.files || []
   } catch (error) {
-    console.error("Erro ao listar conteúdo da pasta:", error)
+    console.error("Error listing folder contents:", error)
     throw error
   }
 }
 
-// Atualizar a função getFileViewUrl para usar URLs de incorporação do Google Drive
-export async function getFileViewUrl(fileId: string) {
-  try {
-    // Obter informações do arquivo
-    const file = await drive.files.get({
-      fileId,
-      fields: "id,name,mimeType,webContentLink,webViewLink",
-    })
+async function processLessons(files: any[]): Promise<Lesson[]> {
+  return files
+    .filter((file) => file.mimeType !== "application/vnd.google-apps.folder")
+    .map((file) => ({
+      id: file.id,
+      title: file.name,
+      type: determineContentType(file.mimeType),
+      videoUrl: file.id,
+      completed: false,
+    }))
+}
 
-    const mimeType = file.data.mimeType || ""
+async function processModule(module: any, index: number): Promise<Module> {
+  const metadata = await getMetadata(module.id)
+  const subItems = await listFolderContents(module.id)
 
-    // Para documentos do Google, retornar o link de visualização
-    if (mimeType.includes("application/vnd.google-apps.document")) {
-      return {
-        url: `https://docs.google.com/document/d/${fileId}/edit?usp=sharing&embedded=true`,
-        type: "iframe",
-        mimeType,
-      }
-    }
+  console.log(
+    "---------------------------------------------------------------------------",
+    metadata
+  )
 
-    if (mimeType.includes("application/vnd.google-apps.spreadsheet")) {
-      return {
-        url: `https://docs.google.com/spreadsheets/d/${fileId}/edit?usp=sharing&embedded=true`,
-        type: "iframe",
-        mimeType,
-      }
-    }
+  const subModules: SubModule[] = []
 
-    if (mimeType.includes("application/vnd.google-apps.presentation")) {
-      return {
-        url: `https://docs.google.com/presentation/d/${fileId}/edit?usp=sharing&embedded=true`,
-        type: "iframe",
-        mimeType,
-      }
-    }
-
-    // Para PDFs, retornar o link de visualização
-    if (mimeType === "application/pdf") {
-      return {
-        url: `https://drive.google.com/file/d/${fileId}/preview`,
-        type: "iframe",
-        mimeType,
-      }
-    }
-
-    // Para imagens, retornar o link direto
-    if (mimeType.startsWith("image/")) {
-      const accessToken = await auth.getAccessToken()
-      return {
-        url: `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&access_token=${accessToken.token}`,
-        type: "image",
-        mimeType,
-      }
-    }
-
-    // Para vídeos, retornar o link de incorporação
+  for (const subItem of subItems) {
     if (
-      mimeType.startsWith("video/") ||
-      mimeType === "application/vnd.google-apps.video"
+      subItem.mimeType === "application/vnd.google-apps.folder" &&
+      subItem.id
     ) {
-      return {
-        url: `https://drive.google.com/file/d/${fileId}/preview`,
-        type: "video",
-        mimeType,
-      }
+      const lessons = await listFolderContents(subItem.id)
+      subModules.push({
+        id: subItem.id,
+        sort: subModules.length + 1,
+        title: subItem.name ?? "",
+        lessons: await processLessons(lessons),
+      })
     }
+  }
 
-    // Para outros tipos de arquivo, retornar o link de visualização
-    return {
-      url: `https://drive.google.com/file/d/${fileId}/preview`,
-      type: "other",
-      mimeType,
-    }
-  } catch (error) {
-    console.error("Erro ao obter URL do arquivo:", error)
-    throw error
+  // If no submodules found, create default one
+  if (subModules.length === 0) {
+    subModules.push({
+      id: module.id,
+      sort: 1,
+      title: "Aulas",
+      lessons: await processLessons(subItems),
+    })
+  }
+
+  return {
+    id: module.id,
+    title: module.name,
+    sort: index + 1,
+    metadata: metadata || undefined,
+    "lessons-submodules": subModules,
   }
 }
 
-// Função para verificar se um arquivo é um vídeo
-export function isVideoFile(mimeType: string) {
-  return (
-    mimeType.startsWith("video/") ||
-    mimeType === "application/vnd.google-apps.video"
-  )
-}
-
-// Função para verificar se um arquivo é um documento
-export function isDocFile(mimeType: string) {
-  return (
-    mimeType === "application/pdf" ||
-    mimeType === "application/vnd.google-apps.document" ||
-    mimeType === "application/vnd.google-apps.spreadsheet" ||
-    mimeType === "application/vnd.google-apps.presentation" ||
-    mimeType === "text/plain" ||
-    mimeType === "application/msword" ||
-    mimeType ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    mimeType === "application/vnd.ms-excel" ||
-    mimeType ===
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-    mimeType === "application/vnd.ms-powerpoint" ||
-    mimeType ===
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-  )
-}
-
-// Função para extrair a estrutura completa de cursos
 export async function extractCourseStructure(
   rootFolderId = process.env.GOOGLE_FOLDER_ID
-) {
-  if (!rootFolderId) {
-    throw new Error("ID da pasta raiz não fornecido")
-  }
+): Promise<Course[]> {
+  if (!rootFolderId) throw new Error("Root folder ID not provided")
 
   const coursesFolder = await listFolderContents(rootFolderId)
-  const courses = []
+  const courses: Course[] = []
 
   for (const course of coursesFolder) {
     if (course.mimeType === "application/vnd.google-apps.folder") {
-      const courseData = {
-        id: course.id,
-        title: course.name,
-        tags: extractTags(course.name),
-        description: `Descrição para ${course.name}`,
+      const levels = await listFolderContents(course.id!)
+      const courseData: Course = {
+        id: course.id ?? "",
+        title: course.name ?? "",
+        tags: extractTags(course.name ?? ""),
+        description: `Description for ${course.name}`,
         levels: [],
-        type: course.name.toLowerCase().includes("formação")
+        type: course.name?.toLowerCase().includes("formação")
           ? "training"
           : "course",
       }
 
-      // Se for uma formação, buscar níveis
-      if (courseData.type === "training") {
-        const levels = await listFolderContents(course.id)
-
-        for (const [levelIndex, level] of levels.entries()) {
-          if (level.mimeType === "application/vnd.google-apps.folder") {
-            const levelData = {
-              id: level.id,
-              title: level.name,
-              level: levelIndex + 1,
-              modules: [],
-            }
-
-            // Buscar módulos dentro do nível
-            const modules = await listFolderContents(level.id)
-
-            for (const [moduleIndex, module] of modules.entries()) {
-              if (module.mimeType === "application/vnd.google-apps.folder") {
-                const moduleData = {
-                  id: module.id,
-                  title: module.name,
-                  sort: moduleIndex + 1,
-                  "lessons-submodules": [],
-                }
-
-                // Buscar submódulos ou aulas diretas
-                const subItems = await listFolderContents(module.id)
-
-                for (const [subIndex, subItem] of subItems.entries()) {
-                  if (
-                    subItem.mimeType === "application/vnd.google-apps.folder"
-                  ) {
-                    // É um submódulo
-                    const submoduleData = {
-                      id: subItem.id, // Usar o ID original do submódulo
-                      sort: subIndex + 1,
-                      title: subItem.name,
-                      lessons: [],
-                    }
-
-                    // Buscar aulas dentro do submódulo
-                    const lessons = await listFolderContents(subItem.id)
-
-                    for (const lesson of lessons) {
-                      if (
-                        lesson.mimeType !== "application/vnd.google-apps.folder"
-                      ) {
-                        const lessonType = isVideoFile(lesson.mimeType)
-                          ? "video"
-                          : isDocFile(lesson.mimeType)
-                          ? "docs"
-                          : "other"
-
-                        submoduleData.lessons.push({
-                          id: lesson.id,
-                          title: lesson.name,
-                          type: lessonType,
-                          videoUrl: lesson.id, // Armazenamos apenas o ID, a URL será gerada sob demanda
-                          completed: false,
-                        })
-                      }
-                    }
-
-                    moduleData["lessons-submodules"].push(submoduleData)
-                  } else {
-                    // É uma aula direta no módulo
-                    const lessonType = isVideoFile(subItem.mimeType)
-                      ? "video"
-                      : isDocFile(subItem.mimeType)
-                      ? "docs"
-                      : "other"
-
-                    // Criamos um submódulo padrão se não existir
-                    if (moduleData["lessons-submodules"].length === 0) {
-                      moduleData["lessons-submodules"].push({
-                        id: module.id, // Usar o ID do módulo para o submódulo padrão
-                        sort: 1,
-                        title: "Aulas",
-                        lessons: [],
-                      })
-                    }
-
-                    moduleData["lessons-submodules"][0].lessons.push({
-                      id: subItem.id,
-                      title: subItem.name,
-                      type: lessonType,
-                      videoUrl: subItem.id,
-                      completed: false,
-                    })
-                  }
-                }
-
-                levelData.modules.push(moduleData)
-              }
-            }
-
-            courseData.levels.push(levelData)
+      for (const [levelIndex, level] of levels.entries()) {
+        if (level.mimeType === "application/vnd.google-apps.folder") {
+          const modules = await listFolderContents(level.id!)
+          const levelData: Level = {
+            id: level.id ?? "",
+            title: level.name ?? "Course Content",
+            level: levelIndex + 1,
+            modules: [],
           }
-        }
-      } else {
-        // Se for um curso simples, tratar como um único nível
-        const levelData = {
-          id: course.id, // Usar o ID do curso para o nível padrão
-          title: "Conteúdo do Curso",
-          level: 1,
-          modules: [],
-        }
 
-        // Buscar módulos diretamente
-        const modules = await listFolderContents(course.id)
-
-        for (const [moduleIndex, module] of modules.entries()) {
-          if (module.mimeType === "application/vnd.google-apps.folder") {
-            const moduleData = {
-              id: module.id,
-              title: module.name,
-              sort: moduleIndex + 1,
-              "lessons-submodules": [],
+          for (const [moduleIndex, module] of modules.entries()) {
+            if (module.mimeType === "application/vnd.google-apps.folder") {
+              levelData.modules.push(await processModule(module, moduleIndex))
             }
-
-            // Buscar aulas dentro do módulo
-            const lessons = await listFolderContents(module.id)
-
-            moduleData["lessons-submodules"].push({
-              id: module.id, // Usar o ID do módulo para o submódulo
-              sort: 1,
-              title: "Aulas",
-              lessons: lessons
-                .filter(
-                  (lesson) =>
-                    lesson.mimeType !== "application/vnd.google-apps.folder"
-                )
-                .map((lesson) => ({
-                  id: lesson.id,
-                  title: lesson.name,
-                  type: isVideoFile(lesson.mimeType)
-                    ? "video"
-                    : isDocFile(lesson.mimeType)
-                    ? "docs"
-                    : "other",
-                  videoUrl: lesson.id,
-                  completed: false,
-                })),
-            })
-
-            levelData.modules.push(moduleData)
           }
-        }
 
-        courseData.levels.push(levelData)
+          courseData.levels.push(levelData)
+        }
       }
 
       courses.push(courseData)
@@ -319,53 +157,154 @@ export async function extractCourseStructure(
   return courses
 }
 
-// Função auxiliar para extrair tags do nome do curso
-function extractTags(courseName: string): string[] {
-  // Exemplo simples: dividir o nome por espaços e usar como tags
-  return courseName
-    .toLowerCase()
-    .split(" ")
-    .filter((tag) => tag.length > 2)
+function determineContentType(mimeType: string): "video" | "docs" | "other" {
+  if (
+    mimeType.startsWith("video/") ||
+    mimeType === "application/vnd.google-apps.video"
+  )
+    return "video"
+  if (isDocFile(mimeType)) return "docs"
+  return "other"
 }
 
-// Função para salvar a estrutura de cursos em um arquivo JSON
+function isDocFile(mimeType: string): boolean {
+  return (
+    mimeType === "application/vnd.google-apps.document" ||
+    mimeType === "application/pdf" ||
+    mimeType.includes("document") ||
+    mimeType.includes("text")
+  )
+}
+
+function extractTags(courseName: string): string[] {
+  const tags = courseName.toLowerCase().match(/\[(.*?)\]/g) || []
+  return tags.map((tag) => tag.replace(/[\[\]]/g, "").trim())
+}
+
 export async function saveCourseStructure() {
   try {
     const courses = await extractCourseStructure()
     const dataDir = path.join(process.cwd(), "data")
 
-    // Criar diretório se não existir
-    try {
-      await fs.access(dataDir)
-    } catch {
-      await fs.mkdir(dataDir, { recursive: true })
-    }
-
+    await fs.mkdir(dataDir, { recursive: true })
     await fs.writeFile(
       path.join(dataDir, "courses.json"),
       JSON.stringify(courses, null, 2)
     )
 
-    console.log("Estrutura de cursos salva com sucesso!")
     return courses
   } catch (error) {
-    console.error("Erro ao salvar estrutura de cursos:", error)
+    console.error("Error saving course structure:", error)
     throw error
   }
 }
 
-// Função para carregar a estrutura de cursos do arquivo JSON
-export async function loadCourseStructure() {
+export async function loadCourseStructure(): Promise<Course[]> {
   try {
     const filePath = path.join(process.cwd(), "data", "courses.json")
     const data = await fs.readFile(filePath, "utf8")
     return JSON.parse(data)
   } catch (error) {
-    console.error("Erro ao carregar estrutura de cursos:", error)
-    // Se o arquivo não existir, criar a estrutura
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
       return await saveCourseStructure()
     }
     throw error
+  }
+}
+
+interface FileViewData {
+  url: string
+  type: "iframe" | "image" | "video" | "other"
+  mimeType: string
+}
+
+// Add cache map
+const urlCache = new Map<string, { data: FileViewData; timestamp: number }>()
+const CACHE_DURATION = 1000 * 60 * 30 // 30 minutes
+
+export async function getFileViewUrl(fileId: string): Promise<FileViewData> {
+  try {
+    // Check cache
+    const cached = urlCache.get(fileId)
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.data
+    }
+
+    // Validate file existence
+    const file = await drive.files.get({
+      fileId,
+      fields: "id,name,mimeType,webContentLink,webViewLink",
+    })
+
+    const mimeType = file.data.mimeType || ""
+    let viewData: FileViewData
+
+    // Google Docs handling
+    if (mimeType.includes("application/vnd.google-apps.document")) {
+      viewData = {
+        url: `https://docs.google.com/document/d/${fileId}/edit?usp=sharing&embedded=true`,
+        type: "iframe",
+        mimeType,
+      }
+    }
+    // Spreadsheets
+    else if (mimeType.includes("application/vnd.google-apps.spreadsheet")) {
+      viewData = {
+        url: `https://docs.google.com/spreadsheets/d/${fileId}/edit?usp=sharing&embedded=true`,
+        type: "iframe",
+        mimeType,
+      }
+    }
+    // Presentations
+    else if (mimeType.includes("application/vnd.google-apps.presentation")) {
+      viewData = {
+        url: `https://docs.google.com/presentation/d/${fileId}/edit?usp=sharing&embedded=true`,
+        type: "iframe",
+        mimeType,
+      }
+    }
+    // PDFs
+    else if (mimeType === "application/pdf") {
+      viewData = {
+        url: `https://drive.google.com/file/d/${fileId}/preview`,
+        type: "iframe",
+        mimeType,
+      }
+    }
+    // Images
+    else if (mimeType.startsWith("image/")) {
+      const accessToken = await auth.getAccessToken()
+      viewData = {
+        url: `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&access_token=${accessToken}`,
+        type: "image",
+        mimeType,
+      }
+    }
+    // Videos
+    else if (
+      mimeType.startsWith("video/") ||
+      mimeType === "application/vnd.google-apps.video"
+    ) {
+      viewData = {
+        url: `https://drive.google.com/file/d/${fileId}/preview`,
+        type: "video",
+        mimeType,
+      }
+    }
+    // Other files
+    else {
+      viewData = {
+        url: `https://drive.google.com/file/d/${fileId}/preview`,
+        type: "other",
+        mimeType,
+      }
+    }
+
+    // Update cache
+    urlCache.set(fileId, { data: viewData, timestamp: Date.now() })
+    return viewData
+  } catch (error) {
+    console.error("Error getting file view URL:", error)
+    throw new Error(`Failed to get view URL for file ${fileId}`)
   }
 }
