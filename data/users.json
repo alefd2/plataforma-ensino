@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "email": "alefolivfeira@gmail.com",
+    "name": "Alef Oliveira",
+    "watchedLessons": [
+      {
+        "courseId": "19Xt8BJ8gPiq18Mg7E7g_EBLUxWN8XvyO",
+        "lessonId": "1zLQsgzyWoYF9mk37BrLzCUrM--pOUwEs"
+      },
+      {
+        "courseId": "19Xt8BJ8gPiq18Mg7E7g_EBLUxWN8XvyO",
+        "lessonId": "1-nrHP2sQCCW9hJrsIeL9IyGz7m-nZcyu"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "email": "rebecca.ceg@gmail.com",
+    "name": "Rebecca",
+    "watchedLessons": []
+  }
+]

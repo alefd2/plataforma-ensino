@@ -1,0 +1,478 @@
+[
+  {
+    "id": "12Ega8nbMwCUVGCuQ7aR59NCmpN3XFoYf",
+    "title": "Cursos",
+    "tags": [
+      "cursos"
+    ],
+    "description": "Descrição para Cursos",
+    "levels": [
+      {
+        "id": "12Ega8nbMwCUVGCuQ7aR59NCmpN3XFoYf",
+        "title": "Conteúdo do Curso",
+        "level": 1,
+        "modules": [
+          {
+            "id": "1Y8Tz8tA9E9799h3j8OIAk5TTPsJ62-lp",
+            "title": "Adicionando um Chat em tempo real ao seu aplicativo React Native usando Parse",
+            "sort": 1,
+            "lessons-submodules": [
+              {
+                "id": "1Y8Tz8tA9E9799h3j8OIAk5TTPsJ62-lp",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": [
+                  {
+                    "id": "17G8zOgj7mIaS-Tb8d3iYveUaerwxNzAq",
+                    "title": "Adicionando um Chat em tempo real ao seu aplicativo React Native usando Parse Rocketseat.mp4",
+                    "type": "video",
+                    "videoUrl": "17G8zOgj7mIaS-Tb8d3iYveUaerwxNzAq",
+                    "completed": false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "1dMgeA2PeulPhfOO5MMlbFzInJxCqLoJK",
+            "title": "Saas com Next/Node e RBAC",
+            "sort": 2,
+            "lessons-submodules": [
+              {
+                "id": "1dMgeA2PeulPhfOO5MMlbFzInJxCqLoJK",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type": "course"
+  },
+  {
+    "id": "19Xt8BJ8gPiq18Mg7E7g_EBLUxWN8XvyO",
+    "title": "Desenvolvimento de IA",
+    "tags": [
+      "desenvolvimento"
+    ],
+    "description": "Descrição para Desenvolvimento de IA",
+    "levels": [
+      {
+        "id": "19Xt8BJ8gPiq18Mg7E7g_EBLUxWN8XvyO",
+        "title": "Conteúdo do Curso",
+        "level": 1,
+        "modules": [
+          {
+            "id": "1Lb-KKZfkYTXM7d-Gg_RQktrO7_dJj_3M",
+            "title": "Nível 1 -  Ambiente de Desenvolvimento",
+            "sort": 1,
+            "lessons-submodules": [
+              {
+                "id": "1Lb-KKZfkYTXM7d-Gg_RQktrO7_dJj_3M",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": [
+                  {
+                    "id": "1zLQsgzyWoYF9mk37BrLzCUrM--pOUwEs",
+                    "title": "1. Apresentação.mp4",
+                    "type": "video",
+                    "videoUrl": "1zLQsgzyWoYF9mk37BrLzCUrM--pOUwEs",
+                    "completed": false
+                  },
+                  {
+                    "id": "1-nrHP2sQCCW9hJrsIeL9IyGz7m-nZcyu",
+                    "title": "2. Introdução.mp4",
+                    "type": "video",
+                    "videoUrl": "1-nrHP2sQCCW9hJrsIeL9IyGz7m-nZcyu",
+                    "completed": false
+                  },
+                  {
+                    "id": "1pIK-BbplXicXwWZUD3NDocLfzNnC7V9v",
+                    "title": "3. Gerenciador de Versões Python.mp4",
+                    "type": "video",
+                    "videoUrl": "1pIK-BbplXicXwWZUD3NDocLfzNnC7V9v",
+                    "completed": false
+                  },
+                  {
+                    "id": "1TAq-pb8LzCtelIDqupzPaCE1ktWp-2cs",
+                    "title": "4. Gerenciador de Ambientes Virtuais.mp4",
+                    "type": "video",
+                    "videoUrl": "1TAq-pb8LzCtelIDqupzPaCE1ktWp-2cs",
+                    "completed": false
+                  },
+                  {
+                    "id": "1LrNeoURFyoIrL1xqpTM0rYVL2XIUwKwK",
+                    "title": "5. Opções de Gerenciadores.mp4",
+                    "type": "video",
+                    "videoUrl": "1LrNeoURFyoIrL1xqpTM0rYVL2XIUwKwK",
+                    "completed": false
+                  },
+                  {
+                    "id": "1gb0Is88nnExrOsJCeBnApDBwZxkiBy_C",
+                    "title": "6. Hands-On Pyenv.mp4",
+                    "type": "video",
+                    "videoUrl": "1gb0Is88nnExrOsJCeBnApDBwZxkiBy_C",
+                    "completed": false
+                  },
+                  {
+                    "id": "1gMxZSXA67_kgcB6Rk23eZ6hPZ18LLdJ6",
+                    "title": "7. Hands-On Pipenv.mp4",
+                    "type": "video",
+                    "videoUrl": "1gMxZSXA67_kgcB6Rk23eZ6hPZ18LLdJ6",
+                    "completed": false
+                  },
+                  {
+                    "id": "18JpiK54cYtlPB_aFAjDeOT5vAicWwUEg",
+                    "title": "8. VSCode - Extensions.mp4",
+                    "type": "video",
+                    "videoUrl": "18JpiK54cYtlPB_aFAjDeOT5vAicWwUEg",
+                    "completed": false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "1gvUy1co6jUC4h-shMywzMgmC24rkExws",
+            "title": "Nível 2 - Estatística para Devs",
+            "sort": 2,
+            "lessons-submodules": [
+              {
+                "id": "1gvUy1co6jUC4h-shMywzMgmC24rkExws",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "17lVH16x9xLY_2niTkYj7v8rNgun74o2z",
+            "title": "Nível 3 - Análise Exploratória de Dados",
+            "sort": 3,
+            "lessons-submodules": [
+              {
+                "id": "17lVH16x9xLY_2niTkYj7v8rNgun74o2z",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "1YA1FwxEwLAUWbqjEcvLlztxQd9YcGe2P",
+            "title": "Nível 4 - Aprendizado de Máquina",
+            "sort": 4,
+            "lessons-submodules": [
+              {
+                "id": "1YA1FwxEwLAUWbqjEcvLlztxQd9YcGe2P",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "1YB2j1966PTQfHTzbDzKvcpOxwPBk6-OE",
+            "title": "Nível 5 - Algoritmos Supervisionados",
+            "sort": 5,
+            "lessons-submodules": [
+              {
+                "id": "1YB2j1966PTQfHTzbDzKvcpOxwPBk6-OE",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "1R4Fm2IQXTvf2xCqtJ0gkvQbk8rftiy6F",
+            "title": "Nível 6 - Algoritmos Não Supervisionados",
+            "sort": 6,
+            "lessons-submodules": [
+              {
+                "id": "1R4Fm2IQXTvf2xCqtJ0gkvQbk8rftiy6F",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "1vkaUdBmvqFN4J8u27StTIvdJ-u8a6bQf",
+            "title": "Nível 7 - Ensemble de Modelos",
+            "sort": 7,
+            "lessons-submodules": [
+              {
+                "id": "1vkaUdBmvqFN4J8u27StTIvdJ-u8a6bQf",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "11CNYBVLxBy8OQ9hVa2KmiqkMyvdZP8Io",
+            "title": "Nível 8 - Desafio Final",
+            "sort": 8,
+            "lessons-submodules": [
+              {
+                "id": "11CNYBVLxBy8OQ9hVa2KmiqkMyvdZP8Io",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type": "course"
+  },
+  {
+    "id": "1yxKytaRW603wH11kGsNHxdkPSjLuqMtb",
+    "title": "NodeJS",
+    "tags": [
+      "nodejs"
+    ],
+    "description": "Descrição para NodeJS",
+    "levels": [
+      {
+        "id": "1yxKytaRW603wH11kGsNHxdkPSjLuqMtb",
+        "title": "Conteúdo do Curso",
+        "level": 1,
+        "modules": [
+          {
+            "id": "17JWkbMGa6XPgLY-vomELm9Z44otbSTat",
+            "title": "Nível 1 - Fundamentos",
+            "sort": 1,
+            "lessons-submodules": [
+              {
+                "id": "17JWkbMGa6XPgLY-vomELm9Z44otbSTat",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "17JZ15vk6778_BU9Vp1qbB_FuX3S2jWff",
+            "title": "Nível 2 - Rotas e HTTP",
+            "sort": 2,
+            "lessons-submodules": [
+              {
+                "id": "17JZ15vk6778_BU9Vp1qbB_FuX3S2jWff",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": [
+                  {
+                    "id": "1XAYKY9sbwqK6x_1FtI5k-GXi7yoVrbimqLZttBCOrb8",
+                    "title": "docs-rotas-http",
+                    "type": "docs",
+                    "videoUrl": "1XAYKY9sbwqK6x_1FtI5k-GXi7yoVrbimqLZttBCOrb8",
+                    "completed": false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "1pqorb0fvaUv5DEAfLyl1wk0Vjxh_M5Tr",
+            "title": "Nível 3 - Implementando o SOLID",
+            "sort": 3,
+            "lessons-submodules": [
+              {
+                "id": "1pqorb0fvaUv5DEAfLyl1wk0Vjxh_M5Tr",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": [
+                  {
+                    "id": "1kpNE3YhVLyHi5bpkYlca4Xhr8CGPl-bXxjQb21rUb5M",
+                    "title": "docs-http-ddd",
+                    "type": "docs",
+                    "videoUrl": "1kpNE3YhVLyHi5bpkYlca4Xhr8CGPl-bXxjQb21rUb5M",
+                    "completed": false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "1YgOYL0dAXb2EOlBqbO_GXN8RpEYFcigy",
+            "title": "Nível 4 - DDD e Primeiro framework",
+            "sort": 4,
+            "lessons-submodules": [
+              {
+                "id": "1YgOYL0dAXb2EOlBqbO_GXN8RpEYFcigy",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type": "course"
+  },
+  {
+    "id": "1drofmbpTBvHCyRLWCTKUsIVwdj0ZDH3F",
+    "title": "PHP",
+    "tags": [
+      "php"
+    ],
+    "description": "Descrição para PHP",
+    "levels": [
+      {
+        "id": "1drofmbpTBvHCyRLWCTKUsIVwdj0ZDH3F",
+        "title": "Conteúdo do Curso",
+        "level": 1,
+        "modules": []
+      }
+    ],
+    "type": "course"
+  },
+  {
+    "id": "1znHQDztsI4a7tdGJzcSK8GmYrxCI4mpx",
+    "title": "ReactJS",
+    "tags": [
+      "reactjs"
+    ],
+    "description": "Descrição para ReactJS",
+    "levels": [
+      {
+        "id": "1znHQDztsI4a7tdGJzcSK8GmYrxCI4mpx",
+        "title": "Conteúdo do Curso",
+        "level": 1,
+        "modules": [
+          {
+            "id": "1sVD5-RfaeJRCSXh5J5aYmBz2rfAXgzqW",
+            "title": "Nível 1 - Fundamentos",
+            "sort": 1,
+            "lessons-submodules": [
+              {
+                "id": "1sVD5-RfaeJRCSXh5J5aYmBz2rfAXgzqW",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "1Fv4WyZJ0DvHpmhwV70BOcq0E-NHN1oE4",
+            "title": "Nível 2 - Aprofundando em Hooks",
+            "sort": 2,
+            "lessons-submodules": [
+              {
+                "id": "1Fv4WyZJ0DvHpmhwV70BOcq0E-NHN1oE4",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "1whYqjVj4AGsvBlt57Bg4GYdiOrz2O4Rg",
+            "title": "Nível 3 - HTTP e Performance",
+            "sort": 3,
+            "lessons-submodules": [
+              {
+                "id": "1whYqjVj4AGsvBlt57Bg4GYdiOrz2O4Rg",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "1YSumlEtlxVr2KHsuOJuXCotGB4zKRAK0",
+            "title": "Nível 4 - Integrando Frontend - Backend",
+            "sort": 4,
+            "lessons-submodules": [
+              {
+                "id": "1YSumlEtlxVr2KHsuOJuXCotGB4zKRAK0",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": [
+                  {
+                    "id": "1Kj-JU2bjCzsefpcL55_jO-8UimNT3-CRkCs7GUnvWgw",
+                    "title": "docs Nível 4 - Integrando Frontend - Backend",
+                    "type": "docs",
+                    "videoUrl": "1Kj-JU2bjCzsefpcL55_jO-8UimNT3-CRkCs7GUnvWgw",
+                    "completed": false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "17oVjonprB1U16akd4tqAO2l6bEhb9HtR",
+            "title": "Nível 5 - Primeiro framework",
+            "sort": 5,
+            "lessons-submodules": [
+              {
+                "id": "17oVjonprB1U16akd4tqAO2l6bEhb9HtR",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          },
+          {
+            "id": "15fYB0vft_zAEiHltd02tRCZFCnSuRKTN",
+            "title": "Nível 6 - Design System",
+            "sort": 6,
+            "lessons-submodules": [
+              {
+                "id": "15fYB0vft_zAEiHltd02tRCZFCnSuRKTN",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": [
+                  {
+                    "id": "1cCUzM5pP5FzNXdVJusqQhMgVEKOi_6eaionF0DVscHE",
+                    "title": "0. doc-designe-system",
+                    "type": "docs",
+                    "videoUrl": "1cCUzM5pP5FzNXdVJusqQhMgVEKOi_6eaionF0DVscHE",
+                    "completed": false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "1O_2-1weMyC4_I0_cD1e634r6G1Prh-Ff",
+            "title": "Nível 7 - Aprofundando em Next.js",
+            "sort": 7,
+            "lessons-submodules": [
+              {
+                "id": "1O_2-1weMyC4_I0_cD1e634r6G1Prh-Ff",
+                "sort": 1,
+                "title": "Aulas",
+                "lessons": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type": "course"
+  },
+  {
+    "id": "1Nc5_T5xBRr8ae5p0s60RO6AhYIwMy1tv",
+    "title": "ReactNative",
+    "tags": [
+      "reactnative"
+    ],
+    "description": "Descrição para ReactNative",
+    "levels": [
+      {
+        "id": "1Nc5_T5xBRr8ae5p0s60RO6AhYIwMy1tv",
+        "title": "Conteúdo do Curso",
+        "level": 1,
+        "modules": []
+      }
+    ],
+    "type": "course"
+  }
+]
