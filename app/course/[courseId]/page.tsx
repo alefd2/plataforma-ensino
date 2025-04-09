@@ -16,7 +16,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, FileText, Video, ImageIcon, File } from "lucide-react";
+import {
+  ArrowLeft,
+  FileText,
+  Video,
+  ImageIcon,
+  File,
+  LucideBugPlay,
+  LucideCirclePlay,
+} from "lucide-react";
 import { DebugInfo } from "@/components/debug-info";
 import { Course, Module, SubModule } from "@/types/course";
 
@@ -100,39 +108,36 @@ export default async function CoursePage({
                         )}
                       </div>
                     </AccordionTrigger>
-                    <div className="pl-0 md:pl-4 space-y-4">
-                      {level.modules.map((module: Module) => (
-                        <div key={module.id} className="border rounded-lg p-4">
-                          <div className="pl-0 md:pl-4 space-y-2">
-                            {module["lessons-submodules"] &&
-                              module["lessons-submodules"].map(
-                                (submodule: SubModule) => (
-                                  <AccordionContent>
-                                    <div
-                                      key={submodule.id}
-                                      className="space-y-2"
-                                    >
-                                      {(submodule.lessons[0] && (
-                                        <Link
-                                          href={`/course/${course.id}/level/${level.id}/${module.id}`}
-                                        >
-                                          <Button variant="default" size="sm">
-                                            {submodule.title}
-                                          </Button>
-                                        </Link>
-                                      )) ?? (
-                                        <p className="text-muted-foreground">
-                                          Nenhum conteúdo disponível
-                                        </p>
-                                      )}
-                                    </div>
-                                  </AccordionContent>
-                                )
-                              )}
+                    <AccordionContent>
+                      <div className="pl-0 space-y-4">
+                        {level.modules.map((module: Module) => (
+                          <div
+                            key={module.id}
+                            className="border rounded-lg p-4"
+                          >
+                            <div className="pl-0 md:pl-4 space-y-2">
+                              <Link
+                                href={`/course/${course.id}/level/${level.id}/${module.id}`}
+                              >
+                                <div className="flex items-center space-x-4">
+                                  <div className="rounded-full bg-primary/10 p-2">
+                                    <LucideCirclePlay className="h-5 w-5 text-primary" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-sm text-muted-foreground">
+                                      Módulo
+                                    </p>
+                                    <h3 className="font-medium">
+                                      {module.title}
+                                    </h3>
+                                  </div>
+                                </div>
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        )) ?? "Sem dados"}
+                      </div>
+                    </AccordionContent>
                   </AccordionItem>
                 </Accordion>
               ))}
