@@ -709,7 +709,7 @@
       {
         "id": "1Lb-KKZfkYTXM7d-Gg_RQktrO7_dJj_3M",
         "title": "Nível 1 -  Introdução",
-        "level": 2,
+        "level": 3,
         "modules": [
           {
             "id": "1_QebaINSujrI9klj2t5Rn3QNuJo2okD5",
@@ -786,7 +786,7 @@
       {
         "id": "1gvUy1co6jUC4h-shMywzMgmC24rkExws",
         "title": "Nível 2 - Estatística para Devs",
-        "level": 3,
+        "level": 4,
         "modules": [
           {
             "id": "1PZGy_tfOkmNxLaq2R2j-O1PCU9hEmKsZ",
@@ -989,37 +989,37 @@
       {
         "id": "17lVH16x9xLY_2niTkYj7v8rNgun74o2z",
         "title": "Nível 3 - Análise Exploratória de Dados",
-        "level": 4,
+        "level": 5,
         "modules": []
       },
       {
         "id": "1YA1FwxEwLAUWbqjEcvLlztxQd9YcGe2P",
         "title": "Nível 4 - Aprendizado de Máquina",
-        "level": 5,
+        "level": 6,
         "modules": []
       },
       {
         "id": "1YB2j1966PTQfHTzbDzKvcpOxwPBk6-OE",
         "title": "Nível 5 - Algoritmos Supervisionados",
-        "level": 6,
+        "level": 7,
         "modules": []
       },
       {
         "id": "1R4Fm2IQXTvf2xCqtJ0gkvQbk8rftiy6F",
         "title": "Nível 6 - Algoritmos Não Supervisionados",
-        "level": 7,
+        "level": 8,
         "modules": []
       },
       {
         "id": "1vkaUdBmvqFN4J8u27StTIvdJ-u8a6bQf",
         "title": "Nível 7 - Ensemble de Modelos",
-        "level": 8,
+        "level": 9,
         "modules": []
       },
       {
         "id": "11CNYBVLxBy8OQ9hVa2KmiqkMyvdZP8Io",
         "title": "Nível 8 - Desafio Final",
-        "level": 9,
+        "level": 10,
         "modules": [
           {
             "id": "1bYKRWLQi4fWH7H92xLOPOreGcoyvgv8x",

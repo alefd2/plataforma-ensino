@@ -1,7 +1,9 @@
+// app/course/[courseId]/lesson/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation"; // Pega o courseId da URL
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,11 +56,8 @@ interface Lesson {
   type: string;
 }
 
-export default function LessonPage({
-  params,
-}: {
-  params: { courseId: string; lessonId: string };
-}) {
+export default function LessonPage() {
+  const { courseId } = useParams() as { courseId: string };
   const [course, setCourse] = useState<Course | null>(null);
   const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,46 +72,24 @@ export default function LessonPage({
         setLoading(true);
         setError(null);
         const response = await fetch("/api/courses");
-
-        if (!response.ok) {
-          throw new Error("Falha ao carregar cursos");
-        }
+        if (!response.ok) throw new Error("Falha ao carregar cursos");
 
         const courses = await response.json();
-        const foundCourse = courses.find(
-          (c: Course) => c.id === params.courseId
-        );
+        const foundCourse = courses.find((c: Course) => c.id === courseId);
 
         if (foundCourse) {
           setCourse(foundCourse);
 
-          // Encontrar a aula atual
-          let foundLesson: Lesson | null = null;
+          const firstLesson = foundCourse.levels
+            .flatMap((l: { modules: any }) => l.modules)
+            .flatMap((m: { [x: string]: any }) => m["lessons-submodules"])
+            .flatMap((s: { lessons: any }) => s.lessons)[0];
 
-          for (const level of foundCourse.levels) {
-            for (const module of level.modules) {
-              for (const submodule of module["lessons-submodules"] || []) {
-                const lesson = (submodule.lessons || []).find(
-                  (l: { id: string }) => l.id === params.lessonId
-                );
-                if (lesson) {
-                  foundLesson = lesson;
-                  break;
-                }
-              }
-            }
-          }
-
-          if (foundLesson) {
-            setCurrentLesson(foundLesson);
-          } else {
-            setError("Aula não encontrada");
-          }
+          if (firstLesson) setCurrentLesson(firstLesson);
         } else {
           setError("Curso não encontrado");
         }
       } catch (error) {
-        console.error("Erro ao carregar dados do curso:", error);
         setError("Erro ao carregar dados do curso");
       } finally {
         setLoading(false);
@@ -137,7 +114,7 @@ export default function LessonPage({
 
     fetchCourseData();
     fetchWatchedLessons();
-  }, [params.courseId, params.lessonId, user]);
+  }, [courseId, user]);
 
   const handleLessonComplete = async (
     lessonId: string,
@@ -148,31 +125,28 @@ export default function LessonPage({
     try {
       const response = await fetch("/api/progress", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          courseId: params.courseId,
+          courseId,
           lessonId,
           watched: isCompleted,
         }),
       });
 
       if (response.ok) {
-        if (isCompleted) {
-          setWatchedLessons((prev) => [...prev, lessonId]);
-        } else {
-          setWatchedLessons((prev) => prev.filter((id) => id !== lessonId));
-        }
+        setWatchedLessons((prev) =>
+          isCompleted
+            ? [...prev, lessonId]
+            : prev.filter((id) => id !== lessonId)
+        );
       }
     } catch (error) {
       console.error("Erro ao atualizar progresso:", error);
     }
   };
 
-  const isLessonWatched = (lessonId: string) => {
-    return watchedLessons.includes(lessonId);
-  };
+  const isLessonWatched = (lessonId: string) =>
+    watchedLessons.includes(lessonId);
 
   if (error) {
     return (
@@ -182,7 +156,7 @@ export default function LessonPage({
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Erro</h1>
             <p className="text-muted-foreground mb-6">{error}</p>
-            <Button onClick={() => router.push(`/course/${params.courseId}`)}>
+            <Button onClick={() => router.push(`/course/${courseId}`)}>
               Voltar para o curso
             </Button>
           </div>
@@ -199,7 +173,7 @@ export default function LessonPage({
         <Button
           variant="ghost"
           className="mb-4"
-          onClick={() => router.push(`/course/${params.courseId}`)}
+          onClick={() => router.push(`/course/${courseId}`)}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar para o curso
@@ -207,14 +181,12 @@ export default function LessonPage({
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <ContentViewer
-              fileId={params.lessonId}
-              onComplete={() => {
-                if (currentLesson) {
-                  handleLessonComplete(currentLesson.id, true);
-                }
-              }}
-            />
+            {currentLesson && (
+              <ContentViewer
+                fileId={currentLesson.id}
+                onComplete={() => handleLessonComplete(currentLesson.id, true)}
+              />
+            )}
 
             {loading ? (
               <div className="mt-4 space-y-2">
@@ -265,8 +237,6 @@ export default function LessonPage({
                 <div className="p-4 space-y-4">
                   <Skeleton className="h-8 w-full" />
                   <Skeleton className="h-24 w-full" />
-                  <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-24 w-full" />
                 </div>
               ) : course ? (
                 <Accordion type="multiple" className="w-full">
@@ -292,42 +262,36 @@ export default function LessonPage({
                                     <li
                                       key={lesson.id}
                                       className={`flex items-center justify-between p-2 rounded-md ${
-                                        lesson.id === params.lessonId
+                                        lesson.id === currentLesson?.id
                                           ? "bg-muted"
                                           : ""
                                       }`}
                                     >
                                       <div className="flex items-center min-w-0">
                                         {isLessonWatched(lesson.id) ? (
-                                          <Check className="h-4 w-4 mr-2 text-green-500 flex-shrink-0" />
+                                          <Check className="h-4 w-4 mr-2 text-green-500" />
                                         ) : (
-                                          <Circle className="h-4 w-4 mr-2 flex-shrink-0" />
+                                          <Circle className="h-4 w-4 mr-2" />
                                         )}
                                         {lesson.type === "video" ? (
-                                          <Video className="h-4 w-4 mr-2 text-blue-500 flex-shrink-0" />
+                                          <Video className="h-4 w-4 mr-2 text-blue-500" />
                                         ) : lesson.type === "docs" ? (
-                                          <FileText className="h-4 w-4 mr-2 text-orange-500 flex-shrink-0" />
+                                          <FileText className="h-4 w-4 mr-2 text-orange-500" />
                                         ) : lesson.type === "image" ? (
-                                          <ImageIcon className="h-4 w-4 mr-2 text-purple-500 flex-shrink-0" />
+                                          <ImageIcon className="h-4 w-4 mr-2 text-purple-500" />
                                         ) : (
-                                          <File className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+                                          <File className="h-4 w-4 mr-2" />
                                         )}
                                         <span className="text-sm truncate">
                                           {lesson.title}
                                         </span>
                                       </div>
-
                                       <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="flex-shrink-0"
-                                        onClick={() =>
-                                          router.push(
-                                            `/course/${params.courseId}/lesson/${lesson.id}`
-                                          )
-                                        }
+                                        onClick={() => setCurrentLesson(lesson)}
                                       >
-                                        {lesson.id === params.lessonId
+                                        {lesson.id === currentLesson?.id
                                           ? "Atual"
                                           : "Ver"}
                                       </Button>

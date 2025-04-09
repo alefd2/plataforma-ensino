@@ -6,12 +6,10 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = !!userCookie?.value
   const isLoginPage = request.nextUrl.pathname === "/login"
 
-  // Se não estiver autenticado e não estiver na página de login, redirecionar para login
   if (!isAuthenticated && !isLoginPage) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  // Se estiver autenticado e estiver na página de login, redirecionar para home
   if (isAuthenticated && isLoginPage) {
     return NextResponse.redirect(new URL("/", request.url))
   }

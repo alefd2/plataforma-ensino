@@ -1,4 +1,3 @@
-import { loadCourseStructure } from "@/lib/google-drive";
 import { Navbar } from "@/components/navbar";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -19,6 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, FileText, Video, ImageIcon, File } from "lucide-react";
 import { DebugInfo } from "@/components/debug-info";
+import { Course, Module, SubModule } from "@/types/course";
 
 export default async function CoursePage({
   params,
@@ -26,12 +26,17 @@ export default async function CoursePage({
   params: { courseId: string };
 }) {
   try {
-    const courses = await loadCourseStructure();
-    const course = courses.find((c: any) => c.id === params.courseId);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/courses/${params.courseId}`
+    );
 
-    if (!course) {
+    if (!res.ok) {
       notFound();
     }
+
+    const course: Course = await res.json();
+
+    //console.log("Course data:", course.levels);
 
     return (
       <div className="min-h-screen flex flex-col">
@@ -77,56 +82,59 @@ export default async function CoursePage({
 
             <CardContent>
               {course.levels.map((level: any) => (
-                <div className="pl-0 md:pl-4 space-y-4">
-                  {level.modules.map((module: any) => (
-                    <div key={module.id} className="border rounded-lg p-4">
-                      <div className="pl-0 md:pl-4 space-y-2">
-                        {module["lessons-submodules"] &&
-                          module["lessons-submodules"].map((submodule: any) => (
-                            <Accordion
-                              type="multiple"
-                              className="w-full"
-                              defaultValue={course.levels.map(
-                                (level: any) => level.id
-                              )}
-                            >
-                              <AccordionItem key={level.id} value={level.id}>
-                                <AccordionTrigger className="text-lg font-medium">
-                                  <div className="flex items-start gap-2 flex-col">
-                                    <span className="font-light text-muted-foreground text-sm truncate">
-                                      {module.title.split("-")[0]}
-                                    </span>
-                                    {module.title.includes("-") && (
-                                      <span className="truncate">
-                                        {module.title.split("-")[1]}
-                                      </span>
-                                    )}
-                                  </div>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  <div key={submodule.id} className="space-y-2">
-                                    {(submodule.lessons[0] && (
-                                      <Link
-                                        href={`/course/${course.id}/lesson/${submodule.lessons[0].id}`}
-                                      >
-                                        <Button variant="default" size="sm">
-                                          Assistir {"  "} {submodule.title}
-                                        </Button>
-                                      </Link>
-                                    )) ?? (
-                                      <p className="text-muted-foreground">
-                                        Nenhum conteúdo disponível
-                                      </p>
-                                    )}
-                                  </div>
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
-                          ))}
+                <Accordion
+                  type="multiple"
+                  className="w-full"
+                  defaultValue={course.levels.map((level: any) => level.id)}
+                >
+                  <AccordionItem key={level.id} value={level.id}>
+                    <AccordionTrigger className="text-lg font-medium">
+                      <div className="flex items-start gap-2 flex-col">
+                        <span className="font-light text-muted-foreground text-sm truncate">
+                          {level.title.split("-")[0]}
+                        </span>
+                        {level.title.includes("-") && (
+                          <span className="truncate">
+                            {level.title.split("-")[1]}
+                          </span>
+                        )}
                       </div>
+                    </AccordionTrigger>
+                    <div className="pl-0 md:pl-4 space-y-4">
+                      {level.modules.map((module: Module) => (
+                        <div key={module.id} className="border rounded-lg p-4">
+                          <div className="pl-0 md:pl-4 space-y-2">
+                            {module["lessons-submodules"] &&
+                              module["lessons-submodules"].map(
+                                (submodule: SubModule) => (
+                                  <AccordionContent>
+                                    <div
+                                      key={submodule.id}
+                                      className="space-y-2"
+                                    >
+                                      {(submodule.lessons[0] && (
+                                        <Link
+                                          href={`/course/${course.id}/lesson/${submodule.lessons[0].id}`}
+                                        >
+                                          <Button variant="default" size="sm">
+                                            Assistir {"  "} {submodule.title}
+                                          </Button>
+                                        </Link>
+                                      )) ?? (
+                                        <p className="text-muted-foreground">
+                                          Nenhum conteúdo disponível
+                                        </p>
+                                      )}
+                                    </div>
+                                  </AccordionContent>
+                                )
+                              )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </AccordionItem>
+                </Accordion>
               ))}
             </CardContent>
           </Card>

@@ -2,6 +2,7 @@ import { google } from "googleapis"
 import path from "path"
 import fs from "fs/promises"
 import { Course, Level, Module, SubModule, Lesson } from "../types/course"
+import { logger } from "@/logs/logger"
 
 const auth = new google.auth.GoogleAuth({
   credentials: {
@@ -44,6 +45,7 @@ async function listFolderContents(folderId: string) {
       fields: "files(id, name, mimeType)",
       orderBy: "name",
     })
+
     return response.data.files || []
   } catch (error) {
     console.error("Error listing folder contents:", error)
@@ -66,11 +68,6 @@ async function processLessons(files: any[]): Promise<Lesson[]> {
 async function processModule(module: any, index: number): Promise<Module> {
   const metadata = await getMetadata(module.id)
   const subItems = await listFolderContents(module.id)
-
-  console.log(
-    "---------------------------------------------------------------------------",
-    metadata
-  )
 
   const subModules: SubModule[] = []
 
@@ -203,6 +200,7 @@ export async function loadCourseStructure(): Promise<Course[]> {
   try {
     const filePath = path.join(process.cwd(), "data", "courses.json")
     const data = await fs.readFile(filePath, "utf8")
+
     return JSON.parse(data)
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {

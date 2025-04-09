@@ -1,0 +1,7 @@
+### Get all courses
+GET http://localhost:3000/api/courses
+Content-Type: application/json
+
+### Get course by ID
+GET http://localhost:3000/api/courses/19Xt8BJ8gPiq18Mg7E7g_EBLUxWN8XvyO
+Content-Type: application/json

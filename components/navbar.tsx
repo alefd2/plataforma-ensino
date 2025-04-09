@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useAuth } from "@/contexts/auth-context"
-import { Button } from "@/components/ui/button"
-import { LogOut, User, Menu } from "lucide-react"
-import { useState } from "react"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import Link from "next/link";
+import { useAuth } from "@/contexts/auth-context";
+import { Button } from "@/components/ui/button";
+import { LogOut, User, Menu } from "lucide-react";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Navbar() {
-  const { user, logout } = useAuth()
-  const [isOpen, setIsOpen] = useState(false)
+  const { user, logout } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <header className="border-b sticky top-0 bg-background z-10">
@@ -37,8 +37,8 @@ export function Navbar() {
                   <Button
                     variant="outline"
                     onClick={() => {
-                      logout()
-                      setIsOpen(false)
+                      logout();
+                      setIsOpen(false);
                     }}
                   >
                     <LogOut className="h-4 w-4 mr-2" />
@@ -65,5 +65,5 @@ export function Navbar() {
         )}
       </div>
     </header>
-  )
+  );
 }

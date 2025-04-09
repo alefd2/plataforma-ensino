@@ -3,21 +3,20 @@ import { cookies } from "next/headers"
 
 export async function GET(request: NextRequest) {
   try {
-    const userCookie = cookies().get("user")
+    const cookieStore = cookies()
+    const userCookie = (await cookieStore).get("user")
 
     if (!userCookie?.value) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 })
     }
 
-    const user = JSON.parse(userCookie.value)
-
-    return NextResponse.json({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-    })
+    const userData = JSON.parse(userCookie.value)
+    return NextResponse.json(userData)
   } catch (error) {
-    console.error("Erro na rota de verificação de autenticação:", error)
-    return NextResponse.json({ error: "Erro interno no servidor" }, { status: 500 })
+    console.error("Error checking auth:", error)
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    )
   }
 }
