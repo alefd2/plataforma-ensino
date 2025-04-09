@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation"; // Pega o courseId da URL
+import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,40 +25,15 @@ import {
 import { useAuth } from "@/contexts/auth-context";
 import { ContentViewer } from "@/components/content-viewer";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface Course {
-  id: string;
-  title: string;
-  levels: Level[];
-}
-
-interface Level {
-  id: string;
-  title: string;
-  modules: Module[];
-}
-
-interface Module {
-  id: string;
-  title: string;
-  "lessons-submodules": Submodule[];
-}
-
-interface Submodule {
-  id: string;
-  title: string;
-  lessons: Lesson[];
-}
-
-interface Lesson {
-  id: string;
-  title: string;
-  type: string;
-}
+import { Lesson, Module, SubModule } from "@/types/course";
 
 export default function LessonPage() {
-  const { courseId } = useParams() as { courseId: string };
-  const [course, setCourse] = useState<Course | null>(null);
+  const { courseId, levelsId, moduleId } = useParams() as {
+    courseId: string;
+    levelsId: string;
+    moduleId: string;
+  };
+  const [modules, setModules] = useState<Module | null>(null);
   const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,21 +46,21 @@ export default function LessonPage() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch("/api/courses");
+        // const response = await fetch(
+        //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/courses/${courseId}`
+        // );
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/courses/${courseId}/levels/${levelsId}/${moduleId}`,
+          { cache: "no-store" }
+        );
+
         if (!response.ok) throw new Error("Falha ao carregar cursos");
 
-        const courses = await response.json();
-        const foundCourse = courses.find((c: Course) => c.id === courseId);
+        const modules = await response.json();
 
-        if (foundCourse) {
-          setCourse(foundCourse);
-
-          const firstLesson = foundCourse.levels
-            .flatMap((l: { modules: any }) => l.modules)
-            .flatMap((m: { [x: string]: any }) => m["lessons-submodules"])
-            .flatMap((s: { lessons: any }) => s.lessons)[0];
-
-          if (firstLesson) setCurrentLesson(firstLesson);
+        if (modules) {
+          setModules(modules);
         } else {
           setError("Curso não encontrado");
         }
@@ -238,30 +213,44 @@ export default function LessonPage() {
                   <Skeleton className="h-8 w-full" />
                   <Skeleton className="h-24 w-full" />
                 </div>
-              ) : course ? (
-                <Accordion type="multiple" className="w-full">
-                  {course.levels.flatMap((level) =>
-                    level.modules.map((module) => (
-                      <AccordionItem key={module.id} value={module.id}>
-                        <AccordionTrigger className="px-4">
-                          {module.title}
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          {(module["lessons-submodules"] || []).map(
-                            (submodule) => (
-                              <div
-                                key={submodule.id}
-                                className="pl-4 pr-2 py-2"
-                              >
-                                <h4 className="text-sm font-medium mb-2">
-                                  {submodule.title}
-                                </h4>
+              ) : modules ? (
+                <div>
+                  {modules["lessons-submodules"].map((submodule: SubModule) => (
+                    <Accordion type="multiple" className="w-full">
+                      <div key={module.id} className="mb-4">
+                        <div key={module.id} className="mb-4">
+                          <div key={submodule.id} className="mb-4">
+                            {/* Accordion para cada submódulo */}
 
+                            <AccordionItem
+                              key={submodule.id}
+                              value={submodule.id}
+                            >
+                              <AccordionTrigger className="px-4">
+                                <div className="flex items-start w-full gap-2">
+                                  <div className="flex items-center gap-4"></div>
+                                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                                    <span className="text-sm font-medium">
+                                      {submodule.title.match(/^\d+/)?.[0] || ""}
+                                    </span>
+                                  </div>
+                                  <div className="flex flex-col text-start">
+                                    <span className="font-medium">
+                                      {submodule.title.replace(/^\d+\.\s*/, "")}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {submodule.lessons?.length || 0} aulas
+                                    </span>
+                                  </div>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent>
                                 <ul className="space-y-2">
-                                  {(submodule.lessons || []).map((lesson) => (
+                                  {/* Lista as aulas dentro de cada submódulo */}
+                                  {(submodule.lessons ?? []).map((lesson) => (
                                     <li
                                       key={lesson.id}
-                                      className={`flex items-center justify-between p-2 rounded-md ${
+                                      className={`flex px-8 items-center justify-between rounded-md ${
                                         lesson.id === currentLesson?.id
                                           ? "bg-muted"
                                           : ""
@@ -298,14 +287,14 @@ export default function LessonPage() {
                                     </li>
                                   ))}
                                 </ul>
-                              </div>
-                            )
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))
-                  )}
-                </Accordion>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </div>
+                        </div>
+                      </div>
+                    </Accordion>
+                  ))}
+                </div>
               ) : null}
             </div>
           </div>

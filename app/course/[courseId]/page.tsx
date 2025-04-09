@@ -114,10 +114,10 @@ export default async function CoursePage({
                                     >
                                       {(submodule.lessons[0] && (
                                         <Link
-                                          href={`/course/${course.id}/lesson/${submodule.lessons[0].id}`}
+                                          href={`/course/${course.id}/level/${level.id}/${module.id}`}
                                         >
                                           <Button variant="default" size="sm">
-                                            Assistir {"  "} {submodule.title}
+                                            {submodule.title}
                                           </Button>
                                         </Link>
                                       )) ?? (
