@@ -22,9 +22,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Definir cookie de autenticação
-    const cookieStore = cookies()
-    cookieStore.set({
+    const response = NextResponse.json({ success: true, user })
+    response.cookies.set({
       name: "user",
       value: JSON.stringify({
         id: user.id,
@@ -33,9 +32,10 @@ export async function GET(request: NextRequest) {
       }),
       httpOnly: true,
       path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 dias
     })
 
-    return NextResponse.json({ success: true, user })
+    return response
   } catch (error) {
     console.error("Erro ao autenticar usuário:", error)
     return NextResponse.json(

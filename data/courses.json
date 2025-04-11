@@ -776,6 +776,13 @@
                     "type": "video",
                     "videoUrl": "18JpiK54cYtlPB_aFAjDeOT5vAicWwUEg",
                     "completed": false
+                  },
+                  {
+                    "id": "1ECdWC7sf5UInMXaXoTpsjgWQYL7LQCCp",
+                    "title": "Cópia de metadata.md",
+                    "type": "docs",
+                    "videoUrl": "1ECdWC7sf5UInMXaXoTpsjgWQYL7LQCCp",
+                    "completed": false
                   }
                 ]
               }
