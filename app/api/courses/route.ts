@@ -1,4 +1,5 @@
-// /api/courses/${params.courseId}
+export const dinamic = "force-static"
+// /api/courses
 
 import { type NextRequest, NextResponse } from "next/server"
 import { loadCourseStructure } from "@/lib/google-drive"
