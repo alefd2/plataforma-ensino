@@ -1,7 +1,7 @@
 export interface Lesson {
   id: string
   title: string
-  type: "video" | "docs" | "other" | "image"
+  type: "video" | "docs" | "image" | "text" | "other"
   videoUrl: string
   completed: boolean
   description?: string

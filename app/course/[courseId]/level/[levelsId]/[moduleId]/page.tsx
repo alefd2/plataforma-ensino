@@ -39,7 +39,7 @@ export default function LessonPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [watchedLessons, setWatchedLessons] = useState<string[]>([]);
-  const [showSidebar, setShowSidebar] = useState(true); // State to toggle sidebar visibility
+  const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { user } = useAuth();
 

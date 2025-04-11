@@ -154,13 +154,31 @@ export async function extractCourseStructure(
   return courses
 }
 
-function determineContentType(mimeType: string): "video" | "docs" | "other" {
+function determineContentType(
+  mimeType: string
+): "video" | "docs" | "image" | "text" | "other" {
   if (
     mimeType.startsWith("video/") ||
     mimeType === "application/vnd.google-apps.video"
-  )
+  ) {
     return "video"
-  if (isDocFile(mimeType)) return "docs"
+  }
+
+  if (isDocFile(mimeType)) {
+    return "docs"
+  }
+
+  if (mimeType.startsWith("image/")) {
+    return "image"
+  }
+
+  if (
+    mimeType === "text/plain" ||
+    mimeType === "application/vnd.google-apps.document"
+  ) {
+    return "text"
+  }
+
   return "other"
 }
 
@@ -261,6 +279,7 @@ export async function getFileViewUrl(fileId: string): Promise<FileViewData> {
         mimeType,
       }
     }
+
     // PDFs
     else if (mimeType === "application/pdf") {
       viewData = {
