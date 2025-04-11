@@ -1,10 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { loadCourseStructure } from "@/lib/google-drive"
 
-export const dynamic = "force-static"
-export const revalidate = 0
-export const runtime = "edge"
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { courseId: string; lessonId: string } }
