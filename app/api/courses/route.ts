@@ -1,4 +1,4 @@
-export const dinamic = "force-static"
+export const dynamic = "force-static"
 // /api/courses
 
 import { type NextRequest, NextResponse } from "next/server"
