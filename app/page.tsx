@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { loadCourseStructure } from "@/lib/google-drive";
 import { Navbar } from "@/components/navbar";
 import { CourseCardAlt } from "@/components/course-card-alt";
