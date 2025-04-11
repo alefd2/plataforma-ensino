@@ -5,6 +5,7 @@ import {
   markLessonAsUnwatched,
 } from "@/lib/users"
 import { cookies } from "next/headers"
+export const dynamic = "force-static"
 
 export async function GET(request: NextRequest) {
   try {

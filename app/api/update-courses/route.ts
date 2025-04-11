@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { saveCourseStructure } from "@/lib/google-drive"
+export const dynamic = "force-static"
 
 export async function GET(request: NextRequest) {
   try {
