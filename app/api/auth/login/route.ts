@@ -1,3 +1,5 @@
+export const dynamic = 'force-static';
+
 import { type NextRequest, NextResponse } from "next/server"
 import { authenticateUser } from "@/lib/users"
 import { cookies } from "next/headers"
