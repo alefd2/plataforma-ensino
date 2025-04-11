@@ -1,6 +1,6 @@
+export const dynamic = "force-static"
 import { getFileViewUrl } from "@/lib/google-drive"
 import { type NextRequest, NextResponse } from "next/server"
-export const dynamic = "force-dynamic"
 
 export async function GET(
   req: NextRequest,

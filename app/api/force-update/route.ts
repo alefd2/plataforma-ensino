@@ -1,8 +1,8 @@
+export const dynamic = "force-static"
 import { type NextRequest, NextResponse } from "next/server"
 import { saveCourseStructure } from "@/lib/google-drive"
 import fs from "fs/promises"
 import path from "path"
-export const dynamic = "force-static"
 export async function GET(request: NextRequest) {
   try {
     // Tentar excluir o arquivo JSON existente

@@ -1,7 +1,6 @@
+export const dynamic = "force-static"
 import { type NextRequest, NextResponse } from "next/server"
 import { loadCourseStructure } from "@/lib/google-drive"
-
-export const dynamic = "force-static"
 
 export async function GET(
   request: NextRequest,
