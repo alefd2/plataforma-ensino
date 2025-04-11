@@ -3,10 +3,10 @@ import { loadCourseStructure } from "@/lib/google-drive"
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { courseId: string } }
+  { params: rawParams }: { params: Promise<{ courseId: string }> }
 ) {
   try {
-    const { courseId } = params
+    const { courseId } = await rawParams
     const courses = await loadCourseStructure()
     const course = courses.find((c) => c.id === courseId)
 

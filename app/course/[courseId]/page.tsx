@@ -29,11 +29,12 @@ import { DebugInfo } from "@/components/debug-info";
 import { Course, Module, SubModule } from "@/types/course";
 
 export default async function CoursePage({
-  params,
+  params: rawParams,
 }: {
-  params: { courseId: string };
+  params: Promise<{ courseId: string }>;
 }) {
   try {
+    const params = await rawParams;
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/courses/${params.courseId}`
     );
@@ -43,8 +44,6 @@ export default async function CoursePage({
     }
 
     const course: Course = await res.json();
-
-    //console.log("Course data:", course.levels);
 
     return (
       <div className="min-h-screen flex flex-col">

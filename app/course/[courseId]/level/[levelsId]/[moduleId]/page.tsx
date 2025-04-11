@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,6 +59,14 @@ export default function LessonPage() {
 
         if (modules) {
           setModules(modules);
+          // Define a primeira aula como padrão
+          const firstLesson = modules["lessons-submodules"]
+            ?.flatMap((submodule: SubModule) => submodule.lessons)
+            ?.find((lesson: Lesson) => lesson);
+
+          if (firstLesson) {
+            setCurrentLesson(firstLesson);
+          }
         } else {
           setError("Curso não encontrado");
         }
@@ -88,7 +95,7 @@ export default function LessonPage() {
 
     fetchCourseData();
     fetchWatchedLessons();
-  }, [courseId, user]);
+  }, [courseId, levelsId, moduleId, user]);
 
   const handleLessonComplete = async (
     lessonId: string,
@@ -121,6 +128,17 @@ export default function LessonPage() {
 
   const isLessonWatched = (lessonId: string) =>
     watchedLessons.includes(lessonId);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <Skeleton className="h-8 w-3/4" />
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -184,12 +202,7 @@ export default function LessonPage() {
               />
             )}
 
-            {loading ? (
-              <div className="mt-4 space-y-2">
-                <Skeleton className="h-8 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ) : currentLesson ? (
+            {currentLesson && (
               <div className="mt-4">
                 <h1 className="text-xl md:text-2xl font-bold">
                   {currentLesson.title}
@@ -220,7 +233,7 @@ export default function LessonPage() {
                   </Button>
                 </div>
               </div>
-            ) : null}
+            )}
           </div>
 
           {showSidebar && (
@@ -230,100 +243,82 @@ export default function LessonPage() {
                   <h2 className="font-medium">Conteúdo do Curso</h2>
                 </div>
 
-                {loading ? (
-                  <div className="p-4 space-y-4">
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-24 w-full" />
-                  </div>
-                ) : modules ? (
+                {modules && (
                   <div>
                     {modules["lessons-submodules"].map(
                       (submodule: SubModule) => (
-                        <Accordion type="multiple" className="w-full">
-                          <div key={module.id} className="mb-4">
-                            <div key={module.id} className="mb-4">
-                              <div key={submodule.id} className="mb-4">
-                                <AccordionItem
-                                  key={submodule.id}
-                                  value={submodule.id}
-                                >
-                                  <AccordionTrigger className="px-4">
-                                    <div className="flex items-start w-full gap-2">
-                                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                                        <span className="text-sm font-medium">
-                                          {submodule.title.match(/^\d+/)?.[0] ||
-                                            ""}
-                                        </span>
-                                      </div>
-                                      <div className="flex flex-col text-start">
-                                        <span className="font-medium">
-                                          {submodule.title.replace(
-                                            /^\d+\.\s*/,
-                                            ""
-                                          )}
-                                        </span>
-                                        <span className="text-xs text-muted-foreground">
-                                          {submodule.lessons?.length || 0} aulas
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ul className="space-y-2">
-                                      {(submodule.lessons ?? []).map(
-                                        (lesson) => (
-                                          <li
-                                            key={lesson.id}
-                                            className={`flex px-8 items-center justify-between rounded-md ${
-                                              lesson.id === currentLesson?.id
-                                                ? "bg-muted"
-                                                : ""
-                                            }`}
-                                          >
-                                            <div className="flex items-center min-w-0">
-                                              {isLessonWatched(lesson.id) ? (
-                                                <Check className="h-4 w-4 mr-2 text-green-500" />
-                                              ) : (
-                                                <Circle className="h-4 w-4 mr-2" />
-                                              )}
-                                              {lesson.type === "video" ? (
-                                                <Video className="h-4 w-4 mr-2 text-blue-500" />
-                                              ) : lesson.type === "docs" ? (
-                                                <FileText className="h-4 w-4 mr-2 text-orange-500" />
-                                              ) : lesson.type === "image" ? (
-                                                <ImageIcon className="h-4 w-4 mr-2 text-purple-500" />
-                                              ) : (
-                                                <File className="h-4 w-4 mr-2" />
-                                              )}
-                                              <span className="text-sm truncate">
-                                                {lesson.title}
-                                              </span>
-                                            </div>
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              onClick={() =>
-                                                setCurrentLesson(lesson)
-                                              }
-                                            >
-                                              {lesson.id === currentLesson?.id
-                                                ? "Atual"
-                                                : "Ver"}
-                                            </Button>
-                                          </li>
-                                        )
-                                      )}
-                                    </ul>
-                                  </AccordionContent>
-                                </AccordionItem>
+                        <Accordion
+                          key={submodule.id}
+                          type="multiple"
+                          className="w-full"
+                        >
+                          <AccordionItem value={submodule.id}>
+                            <AccordionTrigger className="px-4">
+                              <div className="flex items-start w-full gap-2">
+                                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                                  <span className="text-sm font-medium">
+                                    {submodule.title.match(/^\d+/)?.[0] || ""}
+                                  </span>
+                                </div>
+                                <div className="flex flex-col text-start">
+                                  <span className="font-medium">
+                                    {submodule.title.replace(/^\d+\.\s*/, "")}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {submodule.lessons?.length || 0} aulas
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                          </div>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <ul className="space-y-2">
+                                {(submodule.lessons ?? []).map((lesson) => (
+                                  <li
+                                    key={lesson.id}
+                                    className={`flex px-8 items-center justify-between rounded-md ${
+                                      lesson.id === currentLesson?.id
+                                        ? "bg-muted"
+                                        : ""
+                                    }`}
+                                  >
+                                    <div className="flex items-center min-w-0">
+                                      {isLessonWatched(lesson.id) ? (
+                                        <Check className="h-4 w-4 mr-2 text-green-500" />
+                                      ) : (
+                                        <Circle className="h-4 w-4 mr-2" />
+                                      )}
+                                      {lesson.type === "video" ? (
+                                        <Video className="h-4 w-4 mr-2 text-blue-500" />
+                                      ) : lesson.type === "docs" ? (
+                                        <FileText className="h-4 w-4 mr-2 text-orange-500" />
+                                      ) : lesson.type === "image" ? (
+                                        <ImageIcon className="h-4 w-4 mr-2 text-purple-500" />
+                                      ) : (
+                                        <File className="h-4 w-4 mr-2" />
+                                      )}
+                                      <span className="text-sm truncate">
+                                        {lesson.title}
+                                      </span>
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setCurrentLesson(lesson)}
+                                    >
+                                      {lesson.id === currentLesson?.id
+                                        ? "Atual"
+                                        : "Ver"}
+                                    </Button>
+                                  </li>
+                                ))}
+                              </ul>
+                            </AccordionContent>
+                          </AccordionItem>
                         </Accordion>
                       )
                     )}
                   </div>
-                ) : null}
+                )}
               </div>
             </div>
           )}

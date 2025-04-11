@@ -3,10 +3,10 @@ import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { fileId?: string } }
+  { params: rawParams }: { params: Promise<{ fileId: string }> }
 ) {
   try {
-    const { fileId } = params
+    const { fileId } = await rawParams
 
     if (!fileId) {
       return NextResponse.json(
