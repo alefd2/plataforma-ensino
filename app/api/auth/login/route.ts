@@ -23,10 +23,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Definir cookie de autenticação
-    ;(
-      await // Definir cookie de autenticação
-      cookies()
-    ).set({
+    const cookieStore = cookies()
+    cookieStore.set({
       name: "user",
       value: JSON.stringify({
         id: user.id,
@@ -35,17 +33,11 @@ export async function GET(request: NextRequest) {
       }),
       httpOnly: true,
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 1 semana
-      sameSite: "strict",
     })
 
-    return NextResponse.json({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-    })
+    return NextResponse.json({ success: true, user })
   } catch (error) {
-    console.error("Erro na rota de login:", error)
+    console.error("Erro ao autenticar usuário:", error)
     return NextResponse.json(
       { error: "Erro interno no servidor" },
       { status: 500 }
