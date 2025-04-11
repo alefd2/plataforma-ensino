@@ -7,6 +7,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, courses })
   } catch (error) {
     console.error("Erro ao atualizar cursos:", error)
-    return NextResponse.json({ error: "Erro interno no servidor" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    )
   }
 }
